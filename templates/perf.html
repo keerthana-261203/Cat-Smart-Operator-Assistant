@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Operator Performance Analytics</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      color: #fff;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #ffcc00;
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+      margin-bottom: 30px;
+    }
+    .input-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      width: 200px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: #ffcc00;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .section {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,204,0,0.2);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+    h2 {
+      color: #ffcc00;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #ccc;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .stats-table th, .stats-table td {
+      border: 1px solid rgba(255,204,0,0.2);
+      padding: 10px;
+      text-align: center;
+    }
+    .stats-table th {
+      background-color: rgba(255,204,0,0.1);
+      color: #ffcc00;
+    }
+    .summary {
+      margin-top: 20px;
+      font-size: 16px;
+      background-color: rgba(255,204,0,0.1);
+      padding: 15px;
+      border-radius: 10px;
+    }
+    a.back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      background: #ffcc00;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    a.back-btn:hover {
+      background: #ffd700;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Operator Performance Analytics</h1>
+
+    <div class="input-section">
+      <input type="text" id="operatorInput" placeholder="Enter Operator ID (e.g., OP-102)" />
+      <button onclick="loadOperatorData()">Load Data</button>
+    </div>
+
+    <div class="section" id="performanceSection" style="display: none;">
+      <h2>Operator ID: <span id="operatorId">OP-000</span></h2>
+      <p>This section displays live-calculated performance metrics for the selected operator.</p>
+
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Benchmark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Engine Hours</td>
+            <td id="engineHours"></td>
+            <td>1500 hrs</td>
+          </tr>
+          <tr>
+            <td>Fuel Consumption</td>
+            <td id="fuelUsage"></td>
+            <td>≤ 4.5 L/hr</td>
+          </tr>
+          <tr>
+            <td>Idle Time</td>
+            <td id="idleTime"></td>
+            <td>≤ 15%</td>
+          </tr>
+          <tr>
+            <td>Seatbelt Compliance</td>
+            <td id="compliance"></td>
+            <td>≥ 95%</td>
+          </tr>
+          <tr>
+            <td>Productivity Index</td>
+            <td id="productivity"></td>
+            <td>≥ 85%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="summary" id="summaryText">Calculating performance summary...</div>
+    </div>
+
+    <a href="index.html" class="back-btn">Back </a>
+  </div>
+
+  <script>
+    // Simulated operator performance data
+    const operatorData = {
+      "OP-101": { engineHours: 1450.2, fuelUsage: 4.1, idleTime: 12, compliance: 96, productivity: 88 },
+      "OP-102": { engineHours: 1600.5, fuelUsage: 4.6, idleTime: 14, compliance: 97, productivity: 91 },
+      "OP-103": { engineHours: 1300.0, fuelUsage: 4.3, idleTime: 10, compliance: 99, productivity: 86 },
+      "OP-104": { engineHours: 1702.7, fuelUsage: 4.8, idleTime: 16, compliance: 93, productivity: 80 },
+      "OP-105": { engineHours: 1555.3, fuelUsage: 4.2, idleTime: 9, compliance: 98, productivity: 94 }
+    };
+
+    function loadOperatorData() {
+      const operatorId = document.getElementById("operatorInput").value.trim().toUpperCase();
+      const data = operatorData[operatorId];
+
+      if (!data) {
+        alert("No data found for " + operatorId);
+        return;
+      }
+
+      document.getElementById("performanceSection").style.display = "block";
+      document.getElementById("operatorId").textContent = operatorId;
+      document.getElementById("engineHours").textContent = data.engineHours.toFixed(1);
+      document.getElementById("fuelUsage").textContent = data.fuelUsage.toFixed(1) + " L/hr";
+      document.getElementById("idleTime").textContent = data.idleTime + "%";
+      document.getElementById("compliance").textContent = data.compliance + "%";
+      document.getElementById("productivity").textContent = data.productivity + "%";
+
+      // Generate summary
+      let score = 0;
+      if (data.fuelUsage <= 4.5) score++;
+      if (data.idleTime <= 15) score++;
+      if (data.compliance >= 95) score++;
+      if (data.productivity >= 85) score++;
+
+      let summary = "Performance Summary: ";
+      if (score === 4) summary += "Excellent performance. Operator exceeds all benchmarks.";
+      else if (score === 3) summary += "Good performance with minor areas to improve.";
+      else if (score === 2) summary += "Average performance. Attention needed on key metrics.";
+      else summary += "Below average performance. Review needed.";
+
+      document.getElementById("summaryText").textContent = summary;
+    }
+  </script>
+</body>
+</html>

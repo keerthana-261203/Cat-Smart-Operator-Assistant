@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Dashboard</title>
+  <style>
+    body {
+      background: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-header h1 {
+      color: #ffcc00;
+      font-size: 28px;
+      text-shadow: 0 2px 10px rgba(255,204,0,0.3);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,204,0,0.2);
+      border-radius: 15px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(255,204,0,0.3);
+    }
+
+    .card-title {
+      font-weight: bold;
+      color: #ffcc00;
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .progress-container {
+      background: #2d2d2d;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+      height: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ffcc00, #ffd700);
+      width: 0;
+      transition: width 1s ease-in-out;
+    }
+
+    .ai-card {
+      background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+      border: 1px solid rgba(102,126,234,0.4);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+
+    .ai-card h3 {
+      color: #e0e0ff;
+      margin-bottom: 10px;
+    }
+
+    .tasks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .task-item {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,204,0,0.15);
+      border-left: 4px solid #ffcc00;
+      padding: 12px 16px;
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .task-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .task-meta {
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    .task-status {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 5px;
+      text-transform: uppercase;
+    }
+
+    .task-status.upcoming {
+      background: rgba(0, 128, 255, 0.2);
+      color: #00b0ff;
+      border: 1px solid #00b0ff;
+    }
+
+    .task-status.completed {
+      background: rgba(0, 200, 83, 0.2);
+      color: #00e676;
+      border: 1px solid #00e676;
+    }
+
+    .task-status.overdue {
+      background: rgba(255, 82, 82, 0.2);
+      color: #ff5252;
+      border: 1px solid #ff5252;
+    }
+
+    .back-btn {
+      background: #ffcc00;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 30px;
+    }
+
+    .back-btn:hover {
+      background: #ffd700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-header">
+    <h1>🚀 Smart Dashboard</h1>
+    <p>Real-time monitoring and performance insights</p>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="card">
+      <div class="card-title">Engine Hours</div>
+      <div class="metric-value" id="engineHours">1524.3</div>
+      <div class="progress-container">
+        <div class="progress-bar" style="width:80%"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Fuel Level</div>
+      <div class="metric-value" id="fuelLevel">78%</div>
+      <div class="progress-container">
+        <div class="progress-bar" style="width:78%"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Productivity Index</div>
+      <div class="metric-value" id="productivity">91%</div>
+      <div class="progress-container">
+        <div class="progress-bar" style="width:91%"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Operational Efficiency</div>
+      <div class="metric-value" id="efficiency">85%</div>
+      <div class="progress-container">
+        <div class="progress-bar" style="width:85%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Tasks -->
+  <div class="card ai-card">
+    <h3>📌 Tasks Scheduled for Today</h3>
+    <div class="tasks-list">
+      {% for task in today_tasks %}
+        <div class="task-item">
+          <div class="task-title">{{ task.title }}</div>
+          <div class="task-meta">{{ task.date }} at {{ task.time }}</div>
+          <div class="task-status {{ task.status }}">{{ task.status|capitalize }}</div>
+        </div>
+      {% else %}
+        <p>No tasks scheduled for today.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- All Tasks -->
+  <div class="card ai-card">
+    <h3>📅 All Scheduled Tasks</h3>
+    <div class="tasks-list">
+      {% for task in all_tasks %}
+        <div class="task-item">
+          <div class="task-title">{{ task.title }}</div>
+          <div class="task-meta">{{ task.date }} at {{ task.time }}</div>
+          <div class="task-status {{ task.status }}">{{ task.status|capitalize }}</div>
+        </div>
+      {% else %}
+        <p>No overall tasks yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- AI Suggestions -->
+  <div class="ai-card">
+    <h3>🤖 AI Suggestions</h3>
+    <ul>
+      <li>Reduce idle engine time to improve fuel economy.</li>
+      <li>Schedule predictive maintenance for optimal uptime.</li>
+      <li>Monitor operator fatigue based on behavior patterns.</li>
+    </ul>
+  </div>
+
+  <button class="back-btn" onclick="window.history.back()">Back</button>
+
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAT Smart Operator Assistant</title>
+  <style>
+    /* GLOBAL */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color:#fff; overflow-x:hidden;
+    }
+    .container {
+      max-width:1000px; margin:0 auto; padding:0 20px;
+    }
+
+    /* HEADER */
+    .header {
+      background:rgba(0,0,0,0.95); backdrop-filter:blur(10px);
+      padding:15px 0; position:sticky; top:0; z-index:100;
+      border-bottom:3px solid #ffcc00;
+      box-shadow:0 2px 20px rgba(0,0,0,0.5);
+    }
+    .header-content {
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .logo { display:flex; align-items:center; gap:15px; }
+    .logo-icon {
+      width:55px; height:55px;
+      background:linear-gradient(45deg, #ffcc00, #ffd700);
+      border-radius:12px; display:flex; align-items:center;
+      justify-content:center; font-weight:bold; color:#000;
+      font-size:20px; box-shadow:0 4px 15px rgba(255,204,0,0.3);
+    }
+    .logo-text {
+      font-size:26px; font-weight:bold;
+      color:#ffcc00; text-shadow:0 2px 10px rgba(255,204,0,0.3);
+    }
+    .operator-info {
+      display:flex; align-items:center; gap:20px;
+      background:rgba(255,255,255,0.1); padding:10px 20px;
+      border-radius:25px; backdrop-filter:blur(10px);
+    }
+    .status-indicator {
+      width:14px; height:14px; border-radius:50%;
+      background:#4CAF50; animation:pulse 2s infinite;
+      box-shadow:0 0 10px #4CAF50;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.7; transform:scale(1.1); }
+    }
+    .operator-details { font-size:14px; color:#e0e0e0; }
+    .system-time {
+      font-size:18px; /* enlarged time */
+      color:#ffcc00; font-weight:bold;
+    }
+
+    /* NAVIGATION */
+    .nav {
+      background:rgba(255,255,255,0.1); backdrop-filter:blur(20px);
+      margin:25px 0; border-radius:20px;
+      padding:15px; border:1px solid rgba(255,204,0,0.2);
+    }
+    .nav-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:20px;
+    }
+    .nav-item {
+      background:rgba(255,255,255,0.1);
+      border:1px solid rgba(255,204,0,0.3);
+      border-radius:15px; padding:25px;
+      text-align:center; position:relative;
+      cursor:pointer; transition:all 0.4s ease;
+      overflow:hidden;
+    }
+    .nav-item::before {
+      content:''; position:absolute; top:0; left:-100%;
+      width:100%; height:100%;
+      background:linear-gradient(90deg, transparent, rgba(255,204,0,0.1), transparent);
+      transition:left 0.6s ease;
+    }
+    .nav-item:hover {
+      background:rgba(255,204,0,0.15);
+      transform:translateY(-8px);
+      box-shadow:0 15px 40px rgba(255,204,0,0.4);
+      border-color:#ffcc00;
+    }
+    .nav-item:hover::before { left:100%; }
+    .nav-item.intelligent::after {
+      content:"AI"; position:absolute;
+      top:12px; right:12px;
+      background:linear-gradient(45deg,#667eea,#764ba2);
+      color:#fff; padding:4px 8px;
+      border-radius:12px; font-size:11px; font-weight:bold;
+      box-shadow:0 2px 8px rgba(102,126,234,0.3);
+    }
+    .nav-icon {
+      font-size:52px; margin-bottom:15px;
+      color:#ffcc00; filter:drop-shadow(0 2px 8px rgba(255,204,0,0.3));
+    }
+    .nav-title {
+      font-size:17px; font-weight:bold;
+      margin-bottom:8px; color:#fff;
+    }
+    .nav-desc {
+      font-size:13px; color:#cccccc; line-height:1.4;
+    }
+
+    @media (max-width:768px) {
+      .nav-grid { grid-template-columns:1fr; }
+    }
+
+    /* METRICS GRID */
+    .metrics-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+      gap:20px; margin:30px 0;
+    }
+    .card {
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,204,0,0.2);
+      border-radius:15px; padding:20px;
+      text-align:center; transition:all 0.3s ease;
+    }
+    .card:hover {
+      transform:scale(1.03);
+      box-shadow:0 8px 20px rgba(255,204,0,0.3);
+      border-color:#ffcc00;
+    }
+    .card-header {
+      display:flex; align-items:center; gap:18px;
+      margin-bottom:25px; padding-bottom:15px;
+      border-bottom:1px solid rgba(255,204,0,0.2);
+    }
+    .card-icon {
+      font-size:28px; color:#ffcc00;
+      filter:drop-shadow(0 2px 8px rgba(255,204,0,0.3));
+    }
+    .card-title {
+      font-size:20px; font-weight:bold; color:#fff;
+    }
+    .metric-value {
+      font-size:28px; font-weight:bold;
+      color:#ffcc00; margin-bottom:8px;
+      text-shadow:0 2px 10px rgba(255,204,0,0.3);
+    }
+    .metric-label {
+      font-size:13px; color:#cccccc; font-weight:500;
+    }
+    .metric-trend {
+      font-size:11px; margin-top:5px;
+      padding:2px 6px; border-radius:10px;
+      font-weight:bold;
+    }
+    .trend-up { color:#4CAF50; background:rgba(76,175,80,0.1); }
+    .trend-down { color:#f44336; background:rgba(244,67,54,0.1); }
+
+    /* CHART PLACEHOLDER */
+    .chart-container {
+      height:220px; background:rgba(255,255,255,0.05);
+      border-radius:15px; margin:20px 0;
+      position:relative; border:1px solid rgba(255,204,0,0.2);
+    }
+    .chart-overlay {
+      position:absolute; top:10px; right:15px;
+      background:rgba(255,204,0,0.1);
+      padding:5px 10px; border-radius:8px;
+      font-size:11px; color:#ffcc00; font-weight:bold;
+    }
+    .chart-placeholder {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      color:#888; font-size:16px; text-align:center;
+    }
+
+    /* AI INSIGHTS */
+    .ai-insight {
+      background:linear-gradient(135deg,rgba(102,126,234,0.2),rgba(118,75,162,0.2));
+      border:1px solid rgba(102,126,234,0.4);
+      border-radius:15px; padding:20px; margin:12px 0;
+      position:relative; transition:all 0.3s ease;
+    }
+    .ai-insight:hover {
+      transform:translateX(5px);
+      box-shadow:0 8px 25px rgba(102,126,234,0.3);
+    }
+    .ai-insight::before {
+      content:"🤖 AI"; position:absolute;
+      top:-10px; left:20px;
+      background:linear-gradient(45deg,#667eea,#764ba2);
+      color:#fff; padding:4px 12px;
+      border-radius:15px; font-size:11px;
+      font-weight:bold;
+      box-shadow:0 2px 10px rgba(102,126,234,0.3);
+    }
+    .ai-insight-title {
+      font-weight:bold; margin-bottom:8px;
+      color:#e8eaff;
+    }
+    .ai-insight-desc { font-size:13px; color:#d0d0d0; line-height:1.5; }
+    .confidence-bar {
+      width:100%; height:4px;
+      background:rgba(255,255,255,0.1);
+      border-radius:2px; margin-top:8px; overflow:hidden;
+    }
+    .confidence-fill {
+      height:100%;
+      background:linear-gradient(90deg,#667eea,#764ba2);
+      border-radius:2px;
+      transition:width 0.3s ease;
+    }
+
+    /* PREDICTION CARDS */
+    .prediction-card {
+      background:linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.05));
+      border:1px solid rgba(255,204,0,0.4);
+      border-radius:15px; padding:20px; margin:12px 0;
+      transition:all 0.3s ease;
+    }
+    .prediction-card:hover {
+      transform:translateY(-3px);
+      box-shadow:0 10px 30px rgba(255,204,0,0.2);
+    }
+    .prediction-title {
+      font-weight:bold; color:#ffcc00;
+      margin-bottom:10px; font-size:14px;
+    }
+    .prediction-value {
+      font-size:22px; font-weight:bold;
+      margin-bottom:8px; color:#fff;
+    }
+    .prediction-confidence {
+      font-size:12px; color:#cccccc;
+      display:flex; justify-content:space-between;
+      align-items:center;
+    }
+    .prediction-accuracy {
+      background:rgba(76,175,80,0.2);
+      color:#4CAF50; padding:2px 8px;
+      border-radius:10px; font-size:10px;
+      font-weight:bold;
+    }
+
+    /* ALERTS */
+    .alert {
+      background:rgba(255,87,87,0.15); border:1px solid #ff5757;
+      border-radius:15px; padding:20px;
+      margin:12px 0; display:flex; align-items:center;
+      gap:18px; animation:alertPulse 3s infinite;
+      transition:all 0.3s ease;
+    }
+    .alert.warning {
+      background:rgba(255,204,0,0.15);
+      border-color:#ffcc00;
+    }
+    .alert.success {
+      background:rgba(76,175,80,0.15);
+      border-color:#4CAF50;
+    }
+    .alert-icon {
+      font-size:22px; filter:drop-shadow(0 2px 8px rgba(255,87,87,0.3));
+    }
+    .alert.warning .alert-icon { color:#ffcc00; }
+    .alert.success .alert-icon { color:#4CAF50; }
+    .alert-content { flex:1; }
+    .alert-title { font-weight:bold; margin-bottom:5px; }
+    .alert-desc { font-size:13px; color:#cccccc; }
+
+    @keyframes alertPulse {
+      0%,100% { border-color:#ff5757; }
+      50% { border-color:#ff8787; }
+    }
+
+    /* FOOTER */
+    .footer {
+      background:rgba(0,0,0,0.95); padding:25px 0;
+      margin-top:60px; border-top:3px solid #ffcc00;
+      text-align:center;
+    }
+    .footer-content {
+      color:#cccccc; font-size:14px;
+    }
+    .footer-links a {
+      color:#ffcc00; text-decoration:none;
+      margin:0 15px; transition:color 0.3s ease;
+    }
+    .footer-links a:hover { color:#ffd700; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">CAT</div>
+          <div class="logo-text">Smart Operator Assistant</div>
+        </div>
+        <div class="operator-info">
+          <div class="status-indicator"></div>
+          <div class="operator-details">
+            <div>Operator: OP1001</div>
+            <div>Machine: EXC001</div>
+          </div>
+          <div class="system-time" id="systemTime">--:--:--</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-grid">
+        <div class="nav-item intelligent" onclick="location.href='dashboard.html'">
+
+          <div class="nav-icon">📊</div>
+          <div class="nav-title">Smart Dashboard</div>
+          <div class="nav-desc">Real‑time task management & workflow optimization</div>
+        </div>
+        <div class="nav-item intelligent" onclick="location.href='safety.html'">
+
+          <div class="nav-icon">🛡️</div>
+          <div class="nav-title">Safety Intelligence</div>
+          <div class="nav-desc">AI‑powered safety monitoring & risk assessment</div>
+        </div>
+        <div class="nav-item" onclick="location.href='training.html'">
+          <div class="nav-icon">🎓</div>
+          <div class="nav-title">Training Hub</div>
+          <div class="nav-desc">Interactive learning modules & skill tracking</div>
+        </div>
+        <div class="nav-item intelligent" onclick="location.href='perf.html'">
+          <div class="nav-icon">📈</div>
+          <div class="nav-title">Performance Analytics</div>
+          <div class="nav-desc">Insights into efficiency & optimization</div>
+        </div>
+        <div class="nav-item intelligent" onclick="location.href='pred.html'">
+          <div class="nav-icon">🔧</div>
+          <div class="nav-title">Predictive Maintenance</div>
+          <div class="nav-desc">AI‑driven scheduling & failure prediction</div>
+        </div>
+        <div class="nav-item" onclick="location.href='report.html'">
+          <div class="nav-icon">📋</div>
+          <div class="nav-title">Reports & Compliance</div>
+          <div class="nav-desc">Automated reporting & compliance tracking</div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- LIVE METRICS CARD -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📈</div>
+        <div class="card-title">Live Performance Metrics</div>
+      </div>
+      <div class="metrics-grid">
+        <div class="card">
+          <div class="metric-value" id="engineHours">1,523.5</div>
+          <div class="metric-label">Engine Hours</div>
+          <div class="metric-trend trend-up">↗ +2.3%</div>
+        </div>
+        <div class="card">
+          <div class="metric-value" id="fuelLevel">78%</div>
+          <div class="metric-label">Fuel Level</div>
+          <div class="metric-trend trend-down">↘ -12%</div>
+        </div>
+        <div class="card">
+          <div class="metric-value" id="productivity">94%</div>
+          <div class="metric-label">Productivity Index</div>
+          <div class="metric-trend trend-up">↗ +8.1%</div>
+        </div>
+        <div class="card">
+          <div class="metric-value" id="efficiency">87%</div>
+          <div class="metric-label">Operational Efficiency</div>
+          <div class="metric-trend trend-up">↗ +3.7%</div>
+        </div>
+      </div>
+    
+      </div>
+    </div>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAT Smart Operator Assistant</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color:#fff; overflow-x:hidden;
+    }
+    .container { max-width:1000px; margin:0 auto; padding:0 20px; }
+
+    .header {
+      background:rgba(0,0,0,0.95); backdrop-filter:blur(10px);
+      padding:15px 0; position:sticky; top:0; z-index:100;
+      border-bottom:3px solid #ffcc00;
+      box-shadow:0 2px 20px rgba(0,0,0,0.5);
+    }
+    .header-content { display:flex; justify-content:space-between; align-items:center; }
+    .logo { display:flex; align-items:center; gap:15px; }
+    .logo-icon {
+      width:55px; height:55px;
+      background:linear-gradient(45deg, #ffcc00, #ffd700);
+      border-radius:12px; display:flex; align-items:center;
+      justify-content:center; font-weight:bold; color:#000;
+      font-size:20px; box-shadow:0 4px 15px rgba(255,204,0,0.3);
+    }
+    .logo-text {
+      font-size:26px; font-weight:bold;
+      color:#ffcc00; text-shadow:0 2px 10px rgba(255,204,0,0.3);
+    }
+    .operator-info {
+      display:flex; align-items:center; gap:20px;
+      background:rgba(255,255,255,0.1); padding:10px 20px;
+      border-radius:25px; backdrop-filter:blur(10px);
+    }
+    .status-indicator {
+      width:14px; height:14px; border-radius:50%;
+      background:#4CAF50; animation:pulse 2s infinite;
+      box-shadow:0 0 10px #4CAF50;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.7; transform:scale(1.1); }
+    }
+    .operator-details { font-size:14px; color:#e0e0e0; }
+    .system-time {
+      font-size:18px;
+      color:#ffcc00; font-weight:bold;
+    }
+
+    .nav {
+      background:rgba(255,255,255,0.1); backdrop-filter:blur(20px);
+      margin:25px 0; border-radius:20px;
+      padding:15px; border:1px solid rgba(255,204,0,0.2);
+    }
+    .nav-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:20px;
+    }
+    .nav-item {
+      background:rgba(255,255,255,0.1);
+      border:1px solid rgba(255,204,0,0.3);
+      border-radius:15px; padding:25px;
+      text-align:center; position:relative;
+      cursor:pointer; transition:all 0.4s ease;
+      overflow:hidden;
+    }
+    .nav-item::before {
+      content:''; position:absolute; top:0; left:-100%;
+      width:100%; height:100%;
+      background:linear-gradient(90deg, transparent, rgba(255,204,0,0.1), transparent);
+      transition:left 0.6s ease;
+    }
+    .nav-item:hover {
+      background:rgba(255,204,0,0.15);
+      transform:translateY(-8px);
+      box-shadow:0 15px 40px rgba(255,204,0,0.4);
+      border-color:#ffcc00;
+    }
+    .nav-item:hover::before { left:100%; }
+    .nav-item.intelligent::after {
+      content:"AI"; position:absolute;
+      top:12px; right:12px;
+      background:linear-gradient(45deg,#667eea,#764ba2);
+      color:#fff; padding:4px 8px;
+      border-radius:12px; font-size:11px; font-weight:bold;
+      box-shadow:0 2px 8px rgba(102,126,234,0.3);
+    }
+    .nav-icon {
+      font-size:52px; margin-bottom:15px;
+      color:#ffcc00; filter:drop-shadow(0 2px 8px rgba(255,204,0,0.3));
+    }
+    .nav-title {
+      font-size:17px; font-weight:bold;
+      margin-bottom:8px; color:#fff;
+    }
+    .nav-desc {
+      font-size:13px; color:#cccccc; line-height:1.4;
+    }
+
+    @media (max-width:768px) {
+      .nav-grid { grid-template-columns:1fr; }
+    }
+
+    .metrics-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+      gap:20px; margin:30px 0;
+    }
+    .card {
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,204,0,0.2);
+      border-radius:15px; padding:20px;
+      text-align:center; transition:all 0.3s ease;
+      margin-bottom:30px;
+    }
+    .card:hover {
+      transform:scale(1.03);
+      box-shadow:0 8px 20px rgba(255,204,0,0.3);
+      border-color:#ffcc00;
+    }
+    .card-header {
+      display:flex; align-items:center; gap:18px;
+      margin-bottom:25px; padding-bottom:15px;
+      border-bottom:1px solid rgba(255,204,0,0.2);
+      text-align:left;
+    }
+    .card-icon {
+      font-size:28px; color:#ffcc00;
+      filter:drop-shadow(0 2px 8px rgba(255,204,0,0.3));
+    }
+    .card-title {
+      font-size:20px; font-weight:bold; color:#fff;
+    }
+    .metric-value {
+      font-size:28px; font-weight:bold;
+      color:#ffcc00; margin-bottom:8px;
+      text-shadow:0 2px 10px rgba(255,204,0,0.3);
+    }
+    .metric-label {
+      font-size:13px; color:#cccccc; font-weight:500;
+    }
+    .metric-trend {
+      font-size:11px; margin-top:5px;
+      padding:2px 6px; border-radius:10px;
+      font-weight:bold;
+    }
+    .trend-up { color:#4CAF50; background:rgba(76,175,80,0.1); }
+    .trend-down { color:#f44336; background:rgba(244,67,54,0.1); }
+
+    .ai-insight {
+      background:linear-gradient(135deg,rgba(102,126,234,0.2),rgba(118,75,162,0.2));
+      border:1px solid rgba(102,126,234,0.4);
+      border-radius:15px; padding:20px; margin:12px 0;
+      position:relative; transition:all 0.3s ease;
+    }
+    .ai-insight:hover {
+      transform:translateX(5px);
+      box-shadow:0 8px 25px rgba(102,126,234,0.3);
+    }
+    .ai-insight::before {
+      content:"🤖 AI"; position:absolute;
+      top:-10px; left:20px;
+      background:linear-gradient(45deg,#667eea,#764ba2);
+      color:#fff; padding:4px 12px;
+      border-radius:15px; font-size:11px;
+      font-weight:bold;
+      box-shadow:0 2px 10px rgba(102,126,234,0.3);
+    }
+    .ai-insight-title {
+      font-weight:bold; margin-bottom:8px;
+      color:#e8eaff;
+    }
+    .ai-insight-desc { font-size:13px; color:#d0d0d0; line-height:1.5; }
+    .confidence-bar {
+      width:100%; height:4px;
+      background:rgba(255,255,255,0.1);
+      border-radius:2px; margin-top:8px; overflow:hidden;
+    }
+    .confidence-fill {
+      height:100%;
+      background:linear-gradient(90deg,#667eea,#764ba2);
+      border-radius:2px;
+      transition:width 0.3s ease;
+    }
+
+    .prediction-card {
+      background:linear-gradient(135deg,rgba(255,204,0,0.1),rgba(255,204,0,0.05));
+      border:1px solid rgba(255,204,0,0.4);
+      border-radius:15px; padding:20px; margin:12px 0;
+      transition:all 0.3s ease;
+    }
+    .prediction-card:hover {
+      transform:translateY(-3px);
+      box-shadow:0 10px 30px rgba(255,204,0,0.2);
+    }
+    .prediction-title {
+      font-weight:bold; color:#ffcc00;
+      margin-bottom:10px; font-size:14px;
+    }
+    .prediction-value {
+      font-size:22px; font-weight:bold;
+      margin-bottom:8px; color:#fff;
+    }
+    .prediction-confidence {
+      font-size:12px; color:#cccccc;
+      display:flex; justify-content:space-between;
+      align-items:center;
+    }
+    .prediction-accuracy {
+      background:rgba(76,175,80,0.2);
+      color:#4CAF50; padding:2px 8px;
+      border-radius:10px; font-size:10px;
+      font-weight:bold;
+    }
+
+    .alert {
+      background:rgba(255,87,87,0.15); border:1px solid #ff5757;
+      border-radius:15px; padding:20px;
+      margin:12px 0; display:flex; align-items:center;
+      gap:18px; animation:alertPulse 3s infinite;
+      transition:all 0.3s ease;
+    }
+    .alert.warning {
+      background:rgba(255,204,0,0.15);
+      border-color:#ffcc00;
+    }
+    .alert.success {
+      background:rgba(76,175,80,0.15);
+      border-color:#4CAF50;
+    }
+    .alert-icon {
+      font-size:22px; filter:drop-shadow(0 2px 8px rgba(255,87,87,0.3));
+    }
+    .alert.warning .alert-icon { color:#ffcc00; }
+    .alert.success .alert-icon { color:#4CAF50; }
+    .alert-content { flex:1; }
+    .alert-title { font-weight:bold; margin-bottom:5px; }
+    .alert-desc { font-size:13px; color:#cccccc; }
+
+    @keyframes alertPulse {
+      0%,100% { border-color:#ff5757; }
+      50% { border-color:#ff8787; }
+    }
+
+    .footer {
+      background:rgba(0,0,0,0.95); padding:25px 0;
+      margin-top:60px; border-top:3px solid #ffcc00;
+      text-align:center;
+    }
+    .footer-content {
+      color:#cccccc; font-size:14px;
+    }
+    .footer-links a {
+      color:#ffcc00; text-decoration:none;
+      margin:0 15px; transition:color 0.3s ease;
+    }
+    .footer-links a:hover { color:#ffd700; }
+  </style>
+</head>
+<body>
+  <!-- HEADER + NAV + METRICS remain same -->
+  <!-- ... -->
+  
+  <div class="container">
+
+    <!-- AI INSIGHTS -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-icon">🤖</div>
+        <div class="card-title">AI‑Powered Insights</div>
+      </div>
+      <div class="ai-insight">
+        <div class="ai-insight-title">Performance Optimization</div>
+        <div class="ai-insight-desc">Reduce idle time by 12% to improve fuel efficiency by 8.3 L/hour</div>
+        <div class="confidence-bar"><div class="confidence-fill" style="width:89%"></div></div>
+      </div>
+      <div class="ai-insight">
+        <div class="ai-insight-title">Predictive Maintenance Alert</div>
+        <div class="ai-insight-desc">Hydraulic filter replacement recommended in 15.2 operational hours</div>
+        <div class="confidence-bar"><div class="confidence-fill" style="width:94%"></div></div>
+      </div>
+      <div class="ai-insight">
+        <div class="ai-insight-title">Behavioral Analysis</div>
+        <div class="ai-insight-desc">Operator efficiency increased 8.1% compared to 7‑day average</div>
+        <div class="confidence-bar"><div class="confidence-fill" style="width:76%"></div></div>
+      </div>
+    </section>
+
+    <!-- PREDICTIVE ANALYTICS -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-icon">🔮</div>
+        <div class="card-title">Predictive Analytics</div>
+      </div>
+      <div class="prediction-card">
+        <div class="prediction-title">Task Completion Estimate</div>
+        <div class="prediction-value" id="taskTime">2.3 hours</div>
+        <div class="prediction-confidence">
+          <span>Based on current performance</span>
+          <span class="prediction-accuracy">91% Accuracy</span>
+        </div>
+      </div>
+      <div class="prediction-card">
+        <div class="prediction-title">Next Maintenance Window</div>
+        <div class="prediction-value" id="maintenanceDue">47 hours</div>
+        <div class="prediction-confidence">
+          <span>Predictive maintenance algorithm</span>
+          <span class="prediction-accuracy">94% Accuracy</span>
+        </div>
+      </div>
+      <div class="prediction-card">
+        <div class="prediction-title">Fuel Consumption Rate</div>
+        <div class="prediction-value" id="fuelRate">4.2 L/hr</div>
+        <div class="prediction-confidence">
+          <span>Real‑time optimization</span>
+          <span class="prediction-accuracy">97% Accuracy</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SAFETY MONITOR -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-icon">🛡️</div>
+        <div class="card-title">Safety & Compliance Monitor</div>
+      </div>
+      <div class="alert success">
+        <div class="alert-icon">✅</div>
+        <div class="alert-content">
+          <div class="alert-title">All Safety Systems Operational</div>
+          <div class="alert-desc">Pre‑operation safety checklist completed successfully</div>
+        </div>
+      </div>
+      <div class="alert warning">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-content">
+          <div class="alert-title">Proximity Alert: Object Detected</div>
+          <div class="alert-desc">AI vision system detected potential obstacle at 2 o'clock</div>
+        </div>
+      </div>
+      <div class="alert">
+        <div class="alert-icon">🔴</div>
+        <div class="alert-content">
+          <div class="alert-title">Seatbelt Compliance Required</div>
+          <div class="alert-desc">Please ensure seatbelt is properly fastened before operation</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <p>© 2025 Caterpillar Inc. All Rights Reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Support</a>
+          <a href="#">Documentation</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function updateSystemTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', {
+        hour12: true,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      document.getElementById('systemTime').textContent = timeString;
+    }
+    function updateLiveMetrics() {
+      const base = { engine:1523.5, fuel:78, prod:94, eff:87 };
+      const engineHours = (base.engine + Math.random()*0.1).toFixed(1);
+      const fuelLevel = Math.max(0,(base.fuel + Math.random()*4-2)).toFixed(0);
+      const productivity = Math.max(0,Math.min(100,(base.prod + Math.random()*6-3))).toFixed(0);
+      const efficiency = Math.max(0,Math.min(100,(base.eff + Math.random()*8-4))).toFixed(0);
+      document.getElementById('engineHours').textContent = engineHours;
+      document.getElementById('fuelLevel').textContent = fuelLevel+'%';
+      document.getElementById('productivity').textContent = productivity+'%';
+      document.getElementById('efficiency').textContent = efficiency+'%';
+    }
+    setInterval(() => {
+      updateSystemTime();
+      updateLiveMetrics();
+    }, 2000);
+  </script>
+</body>
+</html>

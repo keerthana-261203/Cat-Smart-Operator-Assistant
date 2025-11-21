@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports & Compliance</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      color: #ffcc00;
+      margin-bottom: 40px;
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #ffcc00;
+      margin-bottom: 15px;
+    }
+
+    p, li {
+      font-size: 16px;
+      color: #ddd;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      flex: 1 1 300px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .card-title {
+      font-size: 18px;
+      color: #00ffcc;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .log-table th, .log-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+      color: #eee;
+    }
+
+    .log-table th {
+      background-color: #333;
+      color: #ffcc00;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .resolved { background-color: #28a745; }
+    .review { background-color: #ffc107; color: #000; }
+    .escalated { background-color: #dc3545; }
+
+    a.back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      background: #ffcc00;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    a.back-btn:hover {
+      background: #ffd700;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Reports & Compliance</h1>
+
+    <!-- Section 1: Daily & Weekly Activity Reports -->
+    <div class="section">
+      <h2>1. Daily & Weekly Activity Reports</h2>
+      <p>Summarizes machine usage, fuel consumption, load cycles, and operator shift details. Helps operators track productivity over time.</p>
+
+      <div class="stats">
+        <div class="card">
+          <div class="card-title">Fuel Consumption (Today)</div>
+          <div class="card-value">78 L</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Machine Hours (Weekly)</div>
+          <div class="card-value">52 hrs</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Load Cycles (Today)</div>
+          <div class="card-value">134</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Incident & Violation Logs -->
+    <div class="section">
+      <h2>2. Incident & Violation Logs</h2>
+      <p>Tracks safety violations and operational anomalies for compliance monitoring and performance review.</p>
+
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Machine ID</th>
+            <th>Operator ID</th>
+            <th>Event</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-07-16 09:20</td>
+            <td>MCH-007</td>
+            <td>OP-102</td>
+            <td>Seatbelt Unfastened</td>
+            <td><span class="tag resolved">Resolved</span></td>
+          </tr>
+          <tr>
+            <td>2025-07-15 15:43</td>
+            <td>MCH-005</td>
+            <td>OP-098</td>
+            <td>Overload Detected</td>
+            <td><span class="tag escalated">Escalated</span></td>
+          </tr>
+          <tr>
+            <td>2025-07-14 13:12</td>
+            <td>MCH-004</td>
+            <td>OP-089</td>
+            <td>Idle Overuse</td>
+            <td><span class="tag review">Under Review</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 3: Audit Trail & History -->
+    <div class="section">
+      <h2>3. Audit Trail & History</h2>
+      <p>A complete history of system alerts, operator actions, and service events. Enables internal audits and external compliance checks.</p>
+
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Action</th>
+            <th>Performed By</th>
+            <th>Machine</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-07-16</td>
+            <td>Started Shift</td>
+            <td>OP-102</td>
+            <td>MCH-007</td>
+          </tr>
+          <tr>
+            <td>2025-07-15</td>
+            <td>Received System Alert: Overload</td>
+            <td>OP-098</td>
+            <td>MCH-005</td>
+          </tr>
+          <tr>
+            <td>2025-07-14</td>
+            <td>Completed Maintenance Log Entry</td>
+            <td>System</td>
+            <td>MCH-004</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Back to Dashboard Button -->
+    <a href="index.html" class="back-btn">Back </a>
+  </div>
+</body>
+</html>

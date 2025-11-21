@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAT Smart Operator Assistant - Training Hub</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      color: #ffcc00;
+      margin-bottom: 10px;
+    }
+    .section {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+    }
+    .section-title {
+      font-size: 1.7rem;
+      border-bottom: 2px solid #ffcc00;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+    }
+    iframe {
+      width: 100%;
+      height: 400px;
+      margin-bottom: 20px;
+      border: 3px solid #ffcc00;
+      border-radius: 12px;
+    }
+    .module {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #ffcc00;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #ffcc00;
+      color: #000;
+      cursor: pointer;
+    }
+    ul li::marker {
+      color: #ffcc00;
+    }
+
+    #popup, #simulation-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #222;
+      border: 2px solid #ffcc00;
+      padding: 30px;
+      border-radius: 15px;
+      z-index: 9999;
+      color: #fff;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+    }
+    #popup button, #simulation-popup button {
+      margin-top: 20px;
+    }
+
+    .sim-step {
+      display: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #ffcc00;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 10px;
+    }
+
+    .sim-step.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>CAT Smart Operator Assistant</h1>
+
+  <div class="section">
+    <h2 class="section-title">🎓 Training Hub</h2>
+
+    <!-- Training Videos -->
+<h3>📹 Training Videos</h3>
+<iframe 
+  width="100%" 
+  height="400" 
+  src="https://www.youtube.com/embed/pdodX0mKd98" 
+  title="Operating a Cat® 320 Excavator: The basics" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  allowfullscreen>
+</iframe>
+
+<iframe 
+  width="100%" 
+  height="400" 
+  src="https://www.youtube.com/embed/s22FKB2Zrnk" 
+  title="Operator Coaching on Cat® Next Gen Excavators" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  allowfullscreen>
+</iframe>
+
+<iframe 
+  width="100%" 
+  height="400" 
+  src="https://www.youtube.com/embed/XUeO_0o4ybE" 
+  title="Heavy Equipment Operator Training - Caterpillar" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  allowfullscreen>
+</iframe>
+
+    <!-- Instructor Booking -->
+    <div class="module">
+      <h3>👨‍🏫 Book an Instructor</h3>
+      <label>Choose Instructor:</label><br>
+      <select id="instructor">
+        <option value="">Select Please</option>
+        <option>Mr. Rajesh - Safety Specialist</option>
+        <option>Ms. Kavya - Loader Expert</option>
+        <option>Mr. Arjun - Mechanical Trainer</option>
+        <option>Mrs. Sneha - Fuel Efficiency Coach</option>
+      </select><br>
+      <label>Select Date:</label><br>
+      <input type="date" id="date"><br>
+      <label>Preferred Time Slot:</label><br>
+      <select id="time">
+        <option value="">Select Please</option>
+        <option>09:00 AM - 10:00 AM</option>
+        <option>11:00 AM - 12:00 PM</option>
+        <option>02:00 PM - 03:00 PM</option>
+        <option>04:00 PM - 05:00 PM</option>
+      </select><br>
+      <button onclick="validateBooking()">Book Instructor</button>
+    </div>
+
+    <!-- Simulation Module -->
+    <div class="module">
+      <h3>🕹️ Simulation Module</h3>
+      <p>Test your operational skills through a hands-on simulator.</p>
+      <p>Learn startup sequences, safe handling, and load balancing.</p>
+      <p>Practice makes perfect—get familiar with real-world controls before using actual machines.</p>
+      <button onclick="showSimulationPopup()">Start Simulation</button>
+    </div>
+
+    <!-- Instructions -->
+    <div class="module">
+      <h3>📘 Operating Instructions</h3>
+      <ul>
+        <li>✔️ Ensure surroundings are clear before ignition.</li>
+        <li>✔️ Check fuel, oil, and coolant levels.</li>
+        <li>✔️ Hold the start button for 3 seconds to ignite engine.</li>
+        <li>✔️ Never overload beyond safe limits.</li>
+        <li>✔️ Park and shut down machine after daily use.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Booking Popup -->
+  <div id="popup">
+    <h3>Booking Confirmed!</h3>
+    <p id="popup-text"></p>
+    <button onclick="document.getElementById('popup').style.display='none'">Close</button>
+  </div>
+
+  <!-- Simulation Popup -->
+  <div id="simulation-popup">
+    <h2>🚜 Operator Simulation</h2>
+
+    <div id="sim-step-1" class="sim-step active">
+      <h3>Step 1: Pre-Start Inspection ✅</h3>
+      <p>Check for oil leaks, fluid levels, tire pressure, and surroundings.</p>
+      <button onclick="nextSimStep(1)">Next Step</button>
+    </div>
+
+    <div id="sim-step-2" class="sim-step">
+      <h3>Step 2: Engine Startup 🔑</h3>
+      <p>Enter the cabin, fasten your seatbelt, and hold the ignition for 3 seconds.</p>
+      <button onclick="nextSimStep(2)">Next Step</button>
+    </div>
+
+    <div id="sim-step-3" class="sim-step">
+      <h3>Step 3: Load Handling 🪨</h3>
+      <p>Use joystick to control boom and bucket. Maintain load balance.</p>
+      <button onclick="nextSimStep(3)">Next Step</button>
+    </div>
+
+    <div id="sim-step-4" class="sim-step">
+      <h3>Step 4: Shutdown and Park 🚧</h3>
+      <p>Return bucket to ground, idle engine, turn off ignition, exit safely.</p>
+      <button onclick="nextSimStep(4)">Finish</button>
+    </div>
+
+    <div id="sim-step-5" class="sim-step">
+      <h3>🎉 Simulation Complete!</h3>
+      <p>You've successfully completed the simulation. Great job!</p>
+      <button onclick="closeSimulation()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    function validateBooking() {
+      const instructor = document.getElementById('instructor').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+
+      if (!instructor || !date || !time) {
+        alert("⚠️ Please select instructor, date, and time slot.");
+        return;
+      }
+
+      document.getElementById('popup-text').innerText =
+        `Instructor: ${instructor}\nDate: ${date}\nTime: ${time}`;
+      document.getElementById('popup').style.display = 'block';
+    }
+
+    function showSimulationPopup() {
+      document.getElementById('simulation-popup').style.display = 'block';
+      resetSimulation();
+    }
+
+    function closeSimulation() {
+      document.getElementById('simulation-popup').style.display = 'none';
+      resetSimulation();
+    }
+
+    function nextSimStep(current) {
+      document.getElementById(`sim-step-${current}`).classList.remove('active');
+      document.getElementById(`sim-step-${current + 1}`).classList.add('active');
+    }
+
+    function resetSimulation() {
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(`sim-step-${i}`).classList.remove('active');
+      }
+      document.getElementById('sim-step-1').classList.add('active');
+    }
+  </script>
+  
+  <button onclick="index.html">Back</button>
+
+
+</body>
+</html>

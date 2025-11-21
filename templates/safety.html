@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAT Smart Operator Assistant - Safety Intelligence</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      padding: 20px;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #ffcc00;
+      color: #000;
+      cursor: pointer;
+    }
+    ul li::marker {
+      color: #ffcc00;
+    }
+
+    h1, h2 {
+      color: #ffcc00;
+      margin-bottom: 15px;
+    }
+    .section {
+      background-color: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 0 10px rgba(255,204,0,0.2);
+    }
+    .alert-box {
+      background-color: #330000;
+      border-left: 5px solid red;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+    }
+    .tip-box {
+      background-color: #003300;
+      border-left: 5px solid #00ff00;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+    }
+    .status {
+      margin-top: 10px;
+      background-color: rgba(255,255,255,0.05);
+      border: 1px solid #ffcc00;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔒 Safety Intelligence</h1>
+
+  <div class="section">
+    <h2>📊 Risk Detection Dashboard</h2>
+
+    <div class="alert-box">
+      ⚠️ <strong>High Slope Detected!</strong><br>
+      Operation on incline over 15°. Risk of rollover. Reduce speed and switch to Low Power Mode.
+    </div>
+
+    <div class="alert-box">
+      ⚠️ <strong>Fatigue Warning:</strong><br>
+      5+ continuous hours of operation. Suggest taking a 15-minute break.
+    </div>
+
+    <div class="alert-box">
+      ⚠️ <strong>Overload Warning:</strong><br>
+      Payload exceeds safe limit by 18%. Recommend unloading before proceeding.
+    </div>
+
+    <div class="tip-box">
+      ✅ <strong>Tip:</strong> Maintain 3-point contact while entering or exiting the vehicle.
+    </div>
+
+    <div class="tip-box">
+      ✅ <strong>Tip:</strong> Always verify that the bucket or fork is lowered before shutdown.
+    </div>
+
+    <div class="status">
+      <strong>Current Vehicle Status:</strong><br>
+      • Engine Temp: Normal<br>
+      • Hydraulic Pressure: Stable<br>
+      • Brake System: OK<br>
+      • Fuel Level: 62%
+    </div>
+  </div>
+
+<button onclick="window.location.href='templates/index.html'">Back</button>
+
+</body>
+</html>
