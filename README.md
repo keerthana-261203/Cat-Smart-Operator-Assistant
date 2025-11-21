@@ -1,2 +1,0 @@
-# Cat-Smart-Operator-Assistant
-
